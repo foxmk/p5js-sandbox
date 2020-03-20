@@ -1,16 +1,17 @@
-const FRICTION = 0.05;
 const WRAP = true;
+
 const PARTICLE_COUNT = 100;
+const TYPES_COUNT = 3;
 
-const REPEL_CONSTANT = 0.2;
-const FORCE_CONSTANT = 1.2;
+const FRICTION = 0.05;
 
+const REPEL_CONSTANT = 0.002;
 const REPEL_DISTANCE = 8.0;
+
+const FORCE_CONSTANT = 0.1;
 const MAX_FORCE_DISTANCE = 100.0;
 
 let particles = [];
-
-let particle_types = ['red', 'green', 'blue'];
 
 function Particle(pos, vel, type) {
     this.pos = pos;
@@ -51,26 +52,14 @@ function Particle(pos, vel, type) {
                 this.vel.y *= -1;
             }
         }
+
+        this.force = createVector(0.0, 0.0);
     };
 
     this.draw = function () {
         noStroke();
-
-        if (this.type === 'red') {
-            fill(color(255, 50, 50));
-        } else if (this.type === 'green') {
-            fill(color(50, 255, 50));
-        } else if (this.type === 'blue') {
-            fill(color(50, 50, 255));
-        } else {
-            fill(color(255, 255, 255));
-        }
-
+        fill(this.type.color);
         ellipse(this.pos.x, this.pos.y, 8, 8);
-    };
-
-    this.resetForce = function () {
-        this.force = createVector(0.0, 0.0);
     };
 
     this.applyFriction = function () {
@@ -92,15 +81,11 @@ function Particle(pos, vel, type) {
 
             let c = FORCE_CONSTANT;
 
-            if (this.type === 'green' && driver.type === 'green') {
+            if (this.type !== driver.type) {
                 c *= -1;
             }
 
-            if (this.type === 'blue' && driver.type === 'red') {
-                c *= -1;
-            }
-
-            return direction.mult(c).div(distanse * distanse);
+            return direction.mult(c).div(distanse);
         } else {
             return createVector(0.0, 0.0);
         }
@@ -109,6 +94,15 @@ function Particle(pos, vel, type) {
 
 function setup() {
     createCanvas(500, 500);
+    colorMode(HSB);
+
+    let particle_types = [];
+
+    for (let j = 0; j < TYPES_COUNT; j++) {
+        particle_types.push({
+            color: color(random(0, 255), 200, 255)
+        });
+    }
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
         let pos = createVector(random(0, width), random(0, height));
@@ -120,17 +114,17 @@ function setup() {
 
 function draw() {
     clear();
-    background(51);
+    background(0, 0, 20);
 
     for (let i = 0; i < particles.length; i++) {
         let p = particles[i];
-        p.resetForce();
 
         // Calculate resulting force
         for (let j = 0; j < particles.length; j++) {
             if (i !== j) {
                 let q = particles[j];
-                p.applyForce(p.calculateForce(q));
+                let force = p.calculateForce(q);
+                p.applyForce(force);
             }
         }
 
