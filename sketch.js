@@ -1,6 +1,6 @@
-const FRICTION = 0.001;
+const FRICTION = 0.05;
 const WRAP = true;
-const PARTICLE_COUNT = 4;
+const PARTICLE_COUNT = 25;
 
 const REPEL_CONSTANT = 0.2;
 const FORCE_CONSTANT = 1.2;
@@ -90,7 +90,7 @@ function Particle(pos, vel, type) {
 }
 
 function setup() {
-    createCanvas(400, 400);
+    createCanvas(500, 500);
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
         let pos = createVector(random(0, width), random(0, height));
