@@ -1,13 +1,21 @@
 const FRICTION = 0.001;
 const WRAP = true;
 const PARTICLE_COUNT = 4;
+
+const REPEL_CONSTANT = 0.2;
+const FORCE_CONSTANT = 1.2;
+
 const REPEL_DISTANCE = 8.0;
+const MAX_FORCE_DISTANCE = 100.0;
 
 let particles = [];
 
-function Particle(pos, vel) {
+let particle_types = ['red', 'green', 'blue'];
+
+function Particle(pos, vel, type) {
     this.pos = pos;
     this.vel = vel;
+    this.type = type;
 
     this.update = function () {
         let dx = p5.Vector.mult(this.vel, deltaTime);
@@ -42,7 +50,17 @@ function Particle(pos, vel) {
 
     this.draw = function () {
         noStroke();
-        color(255, 0, 255);
+
+        if (this.type === 'red') {
+            fill(color(255, 50, 50));
+        } else if (this.type === 'green') {
+            fill(color(50, 255, 50));
+        } else if (this.type === 'blue') {
+            fill(color(50, 50, 255));
+        } else {
+            fill(color(255, 255, 255));
+        }
+
         ellipse(this.pos.x, this.pos.y, 8, 8);
     };
 
@@ -51,9 +69,22 @@ function Particle(pos, vel) {
         let direction = p5.Vector.sub(driver.pos, this.pos).normalize();
 
         if (distanse <= REPEL_DISTANCE) {
-            return direction.mult(0.01).mult(log(distanse / REPEL_DISTANCE));
+            return direction.mult(REPEL_CONSTANT).mult(log(distanse / REPEL_DISTANCE));
+        } else if (distanse <= MAX_FORCE_DISTANCE) {
+
+            let c = FORCE_CONSTANT;
+
+            if (this.type === 'green' && driver.type === 'green') {
+                c *= -1;
+            }
+
+            if (this.type === 'blue' && driver.type === 'red') {
+                c *= -1;
+            }
+
+            return direction.mult(c).div(distanse * distanse);
         } else {
-            return direction.mult(0.01).div(distanse * distanse);
+            return createVector(0.0, 0.0);
         }
     }
 }
@@ -64,7 +95,8 @@ function setup() {
     for (let i = 0; i < PARTICLE_COUNT; i++) {
         let pos = createVector(random(0, width), random(0, height));
         let vel = createVector(0.0, 0.0);
-        particles.push(new Particle(pos, vel));
+        let type = random(particle_types);
+        particles.push(new Particle(pos, vel, type));
     }
 }
 
