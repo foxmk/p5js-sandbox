@@ -1,3 +1,6 @@
+const FRICTION = 0.001;
+const WRAP = true;
+
 let particles = [];
 
 function Particle(pos, vel) {
@@ -8,12 +11,30 @@ function Particle(pos, vel) {
         let dx = p5.Vector.mult(this.vel, deltaTime);
         this.pos.add(dx);
 
-        if (this.pos.x < 0 || this.pos.x > width) {
-            this.vel.x *= -1;
-        }
+        if (WRAP) {
+            if (this.pos.x < 0) {
+                this.pos.x = width + this.pos.x;
+            }
 
-        if (this.pos.y < 0 || this.pos.y > height) {
-            this.vel.y *= -1;
+            if (this.pos.x > width) {
+                this.pos.x = this.pos.x - width;
+            }
+
+            if (this.pos.y < 0) {
+                this.pos.y = height + this.pos.y;
+            }
+
+            if (this.pos.y > height) {
+                this.pos.y = this.pos.y - height;
+            }
+        } else {
+            if (this.pos.x < 0 || this.pos.x > width) {
+                this.vel.x *= -1;
+            }
+
+            if (this.pos.y < 0 || this.pos.y > height) {
+                this.vel.y *= -1;
+            }
         }
     };
 
@@ -55,7 +76,7 @@ function draw() {
         }
 
         // Calculate friction
-        let friction = p5.Vector.mult(p.vel, -0.001);
+        let friction = p5.Vector.mult(p.vel, -FRICTION);
         resultForce.add(friction);
 
         // Apply force
