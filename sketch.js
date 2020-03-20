@@ -1,6 +1,6 @@
 const FRICTION = 0.05;
 const WRAP = true;
-const PARTICLE_COUNT = 25;
+const PARTICLE_COUNT = 100;
 
 const REPEL_CONSTANT = 0.2;
 const FORCE_CONSTANT = 1.2;
@@ -17,7 +17,12 @@ function Particle(pos, vel, type) {
     this.vel = vel;
     this.type = type;
 
+    this.force = createVector(0.0, 0.0);
+
     this.update = function () {
+        let dv = p5.Vector.mult(this.force, deltaTime);
+        this.vel.add(dv);
+
         let dx = p5.Vector.mult(this.vel, deltaTime);
         this.pos.add(dx);
 
@@ -64,6 +69,19 @@ function Particle(pos, vel, type) {
         ellipse(this.pos.x, this.pos.y, 8, 8);
     };
 
+    this.resetForce = function () {
+        this.force = createVector(0.0, 0.0);
+    };
+
+    this.applyFriction = function () {
+        let friction = p5.Vector.mult(this.vel, -FRICTION);
+        this.force.add(friction);
+    };
+
+    this.applyForce = function (f) {
+        this.force.add(f);
+    };
+
     this.calculateForce = function calculateForce(driver) {
         let distanse = p5.Vector.dist(this.pos, driver.pos);
         let direction = p5.Vector.sub(driver.pos, this.pos).normalize();
@@ -106,29 +124,18 @@ function draw() {
 
     for (let i = 0; i < particles.length; i++) {
         let p = particles[i];
-
-        let resultForce = createVector(0.0, 0.0);
+        p.resetForce();
 
         // Calculate resulting force
         for (let j = 0; j < particles.length; j++) {
             if (i !== j) {
                 let q = particles[j];
-                resultForce.add(p.calculateForce(q));
+                p.applyForce(p.calculateForce(q));
             }
         }
 
-        // Calculate friction
-        let friction = p5.Vector.mult(p.vel, -FRICTION);
-        resultForce.add(friction);
+        p.applyFriction();
 
-        // Apply force
-        let dv = p5.Vector.mult(resultForce, deltaTime);
-
-        p.vel.add(dv);
-    }
-
-
-    for (let i = 0; i < particles.length; i++) {
         particles[i].update();
     }
 
