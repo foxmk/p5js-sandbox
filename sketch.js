@@ -1,5 +1,4 @@
-var particles = [];
-
+let particles = [];
 
 function Particle(pos, vel) {
     this.pos = pos;
@@ -8,6 +7,14 @@ function Particle(pos, vel) {
     this.update = function () {
         let dx = p5.Vector.mult(this.vel, deltaTime);
         this.pos.add(dx);
+
+        if (this.pos.x < 0 || this.pos.x > width) {
+            this.vel.x *= -1;
+        }
+
+        if (this.pos.y < 0 || this.pos.y > height) {
+            this.vel.y *= -1;
+        }
     };
 
     this.draw = function () {
@@ -20,7 +27,7 @@ function Particle(pos, vel) {
 function setup() {
     createCanvas(400, 400);
 
-    particles.push(new Particle(createVector(40.0, 40.0), createVector(0.1, 0.1)));
+    particles.push(new Particle(createVector(40.0, 40.0), createVector(0.5, 0.1)));
 }
 
 function draw() {
