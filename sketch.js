@@ -11,6 +11,9 @@ const REPEL_DISTANCE = 8.0;
 const FORCE_CONSTANT = 0.1;
 const MAX_FORCE_DISTANCE = 100.0;
 
+const N = MAX_FORCE_DISTANCE - REPEL_DISTANCE;
+const MIDPOINT = ((N) / 2) + REPEL_DISTANCE;
+
 let particles = [];
 
 function Particle(pos, vel, type) {
@@ -76,16 +79,13 @@ function Particle(pos, vel, type) {
         let direction = p5.Vector.sub(driver.pos, this.pos).normalize();
 
         if (distanse <= REPEL_DISTANCE) {
-            return direction.mult(REPEL_CONSTANT).mult(log(distanse / REPEL_DISTANCE));
+            let repelForceMag = REPEL_CONSTANT * log(distanse / REPEL_DISTANCE);
+            return direction.mult(repelForceMag);
         } else if (distanse <= MAX_FORCE_DISTANCE) {
+            let interactionForceMultiplier = abs(MIDPOINT - distanse) / N;
 
-            let c = FORCE_CONSTANT;
-
-            if (this.type !== driver.type) {
-                c *= -1;
-            }
-
-            return direction.mult(c).div(distanse);
+            let interactionForceMag = this.type.attraction_constants[driver.type.type_id] * interactionForceMultiplier;
+            return direction.mult(interactionForceMag);
         } else {
             return createVector(0.0, 0.0);
         }
@@ -99,8 +99,16 @@ function setup() {
     let particle_types = [];
 
     for (let j = 0; j < TYPES_COUNT; j++) {
+        let attraction_constants = [];
+
+        for (let k = 0; k < TYPES_COUNT; k++) {
+            attraction_constants.push(random(-0.01, 0.01));
+        }
+
         particle_types.push({
-            color: color(random(0, 255), 200, 255)
+            type_id: j,
+            color: color(random(0, 255), 200, 255),
+            attraction_constants: attraction_constants
         });
     }
 
