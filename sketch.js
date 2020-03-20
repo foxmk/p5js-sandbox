@@ -1,6 +1,7 @@
 const FRICTION = 0.001;
 const WRAP = true;
-const PARTICLE_COUNT = 2;
+const PARTICLE_COUNT = 4;
+const REPEL_DISTANCE = 8.0;
 
 let particles = [];
 
@@ -44,6 +45,17 @@ function Particle(pos, vel) {
         color(255, 0, 255);
         ellipse(this.pos.x, this.pos.y, 8, 8);
     };
+
+    this.calculateForce = function calculateForce(driver) {
+        let distanse = p5.Vector.dist(this.pos, driver.pos);
+        let direction = p5.Vector.sub(driver.pos, this.pos).normalize();
+
+        if (distanse <= REPEL_DISTANCE) {
+            return direction.mult(0.01).mult(log(distanse / REPEL_DISTANCE));
+        } else {
+            return direction.mult(0.01).div(distanse * distanse);
+        }
+    }
 }
 
 function setup() {
@@ -54,12 +66,6 @@ function setup() {
         let vel = createVector(0.0, 0.0);
         particles.push(new Particle(pos, vel));
     }
-}
-
-function calculateForce(driven, driver) {
-    let distanse = p5.Vector.dist(driven.pos, driver.pos);
-    let direction = p5.Vector.sub(driver.pos, driven.pos).normalize();
-    return direction.mult(0.01).div(distanse * distanse);
 }
 
 function draw() {
@@ -75,7 +81,7 @@ function draw() {
         for (let j = 0; j < particles.length; j++) {
             if (i !== j) {
                 let q = particles[j];
-                resultForce.add(calculateForce(p, q));
+                resultForce.add(p.calculateForce(q));
             }
         }
 
