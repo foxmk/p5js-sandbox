@@ -1,5 +1,6 @@
 const FRICTION = 0.001;
 const WRAP = true;
+const PARTICLE_COUNT = 2;
 
 let particles = [];
 
@@ -48,8 +49,11 @@ function Particle(pos, vel) {
 function setup() {
     createCanvas(400, 400);
 
-    particles.push(new Particle(createVector(40.0, 40.0), createVector(0.0, 0.0)));
-    particles.push(new Particle(createVector(120.0, 120.0), createVector(0.0, 0.0)));
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        let pos = createVector(random(0, width), random(0, height));
+        let vel = createVector(0.0, 0.0);
+        particles.push(new Particle(pos, vel));
+    }
 }
 
 function calculateForce(driven, driver) {
