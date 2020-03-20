@@ -31,25 +31,32 @@ function setup() {
     particles.push(new Particle(createVector(120.0, 120.0), createVector(0.0, 0.0)));
 }
 
+function calculateForce(driven, driver) {
+    let distanse = p5.Vector.dist(driven.pos, driver.pos);
+    let direction = p5.Vector.sub(driver.pos, driven.pos).normalize();
+    return direction.mult(0.01).div(distanse * distanse);
+}
+
 function draw() {
     clear();
     background(51);
 
     for (let i = 0; i < particles.length; i++) {
         let p = particles[i];
+
         let resultForce = createVector(0.0, 0.0);
 
         // Calculate resulting force
         for (let j = 0; j < particles.length; j++) {
-            let q = particles[j];
-
-            let distanse = p5.Vector.dist(p.pos, q.pos);
-
-            let direction = p5.Vector.sub(q.pos, p.pos).normalize();
-            let force = direction.mult(0.01).div(distanse * distanse);
-            resultForce.add(force);
-
+            if (i !== j) {
+                let q = particles[j];
+                resultForce.add(calculateForce(p, q));
+            }
         }
+
+        // Calculate friction
+        let friction = p5.Vector.mult(p.vel, -0.001);
+        resultForce.add(friction);
 
         // Apply force
         let dv = p5.Vector.mult(resultForce, deltaTime);
