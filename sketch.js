@@ -1,17 +1,14 @@
-const WRAP = true;
+const WRAP = false;
 
-const PARTICLE_COUNT = 25;
-const TYPES_COUNT = 5;
+const PARTICLE_COUNT = 200;
+const TYPES_COUNT = 3;
 
-const FRICTION = 0.1;
+const FRICTION = 20.0;
 
 const REPEL_CONSTANT = 0.002;
-const REPEL_DISTANCE = 8.0;
-const FORCE_SD = 0.01;
-const MAX_FORCE_DISTANCE = 100.0;
-
-const N = MAX_FORCE_DISTANCE - REPEL_DISTANCE;
-const MIDPOINT = ((N) / 2) + REPEL_DISTANCE;
+const REPEL_DISTANCE = 10.0;
+const FORCE_SD = 0.001;
+const MAX_FORCE_DISTANCE = 50.0;
 
 let particles = [];
 
@@ -77,10 +74,12 @@ function calculateForce(driven, driver) {
         let repelForceMag = REPEL_CONSTANT * log(distanse / REPEL_DISTANCE);
         return direction.mult(repelForceMag);
     } else if (distanse <= MAX_FORCE_DISTANCE) {
-        let interactionForceMultiplier = abs(MIDPOINT - distanse) / N;
+        let num = 2.0 * abs(distanse - (MAX_FORCE_DISTANCE + REPEL_DISTANCE) * 0.5);
+        let den = MAX_FORCE_DISTANCE - REPEL_DISTANCE;
 
-        let interactionForceMag = driven.type.attraction_constants[driver.type.type_id] * interactionForceMultiplier;
-        return direction.mult(interactionForceMag);
+        let f = driven.type.attraction_constants[driver.type.type_id] * (1.0 - num / den);
+        return direction.mult(f);
+
     } else {
         return createVector(0.0, 0.0);
     }
@@ -131,7 +130,7 @@ function draw() {
             }
         }
 
-        let drag = p5.Vector.mult(p.vel, -FRICTION);
+        let drag = p5.Vector.div(p.vel, -FRICTION);
         p.applyForce(drag);
 
         particles[i].update();
