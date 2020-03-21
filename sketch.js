@@ -11,6 +11,7 @@ const FORCE_SD = 0.001;
 const MAX_FORCE_DISTANCE = 50.0;
 
 let particles = [];
+let additional_force = null;
 
 function Particle(pos, vel, type) {
     this.pos = pos;
@@ -130,13 +131,33 @@ function draw() {
             }
         }
 
+        if (additional_force !== null) {
+            let distanse = p5.Vector.dist(p.pos, additional_force);
+            let direction = p5.Vector.sub(additional_force, p.pos).normalize();
+
+            let f = -1.0 / distanse;
+            let force = direction.mult(f);
+
+            p.applyForce(force);
+        }
+
         let drag = p5.Vector.div(p.vel, -FRICTION);
         p.applyForce(drag);
 
-        particles[i].update();
+
+        p.update();
+    }
+
+    if (additional_force !== null) {
+        additional_force = null;
     }
 
     for (let i = 0; i < particles.length; i++) {
         particles[i].draw();
     }
+}
+
+function mouseClicked() {
+    additional_force = createVector(mouseX, mouseY);
+    return false;
 }
