@@ -1,5 +1,5 @@
 const PARTICLE_COUNT = 1000;
-const TYPES_COUNT = 4;
+const TYPES_COUNT = 3;
 
 let particles = [];
 
@@ -15,11 +15,13 @@ function generateTypes(particle_types) {
             attraction_constants.push(randomGaussian(0, FORCE_SD));
         }
 
+        colorMode(HSB);
         particle_types.push({
             type_id: j,
             color: color(random(0, 255), 200, 255),
             attraction_constants: attraction_constants
         });
+        colorMode(RGB);
     }
 
     return particle_types;

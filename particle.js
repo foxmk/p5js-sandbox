@@ -3,7 +3,7 @@ const WRAP = false;
 const FRICTION = 20.0;
 
 const REPEL_CONSTANT = 0.002;
-const REPEL_DISTANCE = 10.0;
+const REPEL_DISTANCE = 5.0;
 const FORCE_SD = 0.001;
 const MAX_FORCE_DISTANCE = 20.0;
 
@@ -56,7 +56,7 @@ function Particle(pos, vel, type) {
         // ellipse(this.pos.x, this.pos.y, 8, 8);
         noFill();
         stroke(this.type.color);
-        strokeWeight(2);
+        strokeWeight(4);
         point(this.pos.x, this.pos.y);
     };
 
