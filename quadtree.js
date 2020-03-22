@@ -17,6 +17,10 @@ class Rectangle {
     contains(point) {
         return !(point.position.x < this.x || point.position.x >= this.x + this.w || point.position.y < this.y || point.position.y >= this.y + this.h)
     }
+
+    intersects(other) {
+        return !(other.x > this.x + this.w && this.x > other.x + other.w && other.y > this.y + this.h && this.y > other.y + other.h)
+    }
 }
 
 class Quadtree {
@@ -83,19 +87,27 @@ class Quadtree {
         return allInserted;
     }
 
-    count() {
-        let count = 0;
-
-        if (this.divided) {
-            count += this.topleft.count();
-            count += this.topright.count();
-            count += this.bottomleft.count();
-            count += this.bottomright.count();
-        } else {
-            count += this.points.length;
+    query(bounds, points) {
+        if (points === undefined) {
+            points = [];
         }
 
-        return count;
+        if (this.divided) {
+            this.topleft.query(bounds, points);
+            this.topright.query(bounds, points);
+            this.bottomleft.query(bounds, points);
+            this.bottomright.query(bounds, points);
+        } else {
+            if (this.bounds.intersects(bounds)) {
+                for (let p of this.points) {
+                    if (bounds.contains(p)) {
+                        points.push(p);
+                    }
+                }
+            }
+        }
+
+        return points;
     }
 
     draw() {
