@@ -6,6 +6,33 @@ class Point {
     }
 }
 
+class Circle {
+    constructor(x, y, r) {
+        this.x = x;
+        this.y = y;
+        this.r = r;
+    }
+
+    contains(point) {
+        let dx = point.position.x - this.x;
+        let dy = point.position.y - this.y;
+        return this.r * this.r > dx * dx + dy * dy;
+    }
+
+    intersects(other) {
+        if (other instanceof Rectangle) {
+            // TODO: Fix collision detection
+            return this.x + this.r > other.x && other.x + other.w > this.x - this.r && this.y + this.r > other.y && other.y + other.h > this.y - this.r;
+        } else if (other instanceof Circle) {
+            let dx = other.x - this.x;
+            let dy = other.y - this.y;
+            return 4 * this.r * this.r > dx * dx + dy * dy;
+        } else {
+            throw TypeError('undefined type intersection');
+        }
+    }
+}
+
 class Rectangle {
     constructor(x, y, w, h) {
         this.x = x;
@@ -19,7 +46,16 @@ class Rectangle {
     }
 
     intersects(other) {
-        return !(other.x > this.x + this.w && this.x > other.x + other.w && other.y > this.y + this.h && this.y > other.y + other.h)
+        if (other instanceof Rectangle) {
+            return this.x < other.x + other.w && other.x < this.x + this.w && this.y < other.y + other.h && other.y < this.y + this.h;
+        } else if (other instanceof Circle) {
+            // TODO: Fix collision detection
+            let xx = other.x + other.r > this.x && this.x + this.w > other.x - other.r;
+            let yy = other.y + other.r > this.y && this.y + this.h > other.y - other.r;
+            return xx && yy;
+        } else {
+            throw TypeError('undefined type intersection');
+        }
     }
 }
 
