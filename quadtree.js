@@ -155,12 +155,6 @@ class Quadtree {
         rectMode(CORNER);
         rect(this.bounds.x, this.bounds.y, this.bounds.w, this.bounds.h);
 
-        for (let p of this.points) {
-            strokeWeight(4);
-            stroke(255, 255, 255);
-            point(p.position.x, p.position.y);
-        }
-
         if (this.divided) {
             this.topleft.draw();
             this.topright.draw();

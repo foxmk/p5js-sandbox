@@ -1,69 +1,44 @@
-const WRAP = false;
-
 const FRICTION = 20.0;
 
 const REPEL_CONSTANT = 0.002;
 const REPEL_DISTANCE = 5.0;
 const FORCE_SD = 0.001;
-const MAX_FORCE_DISTANCE = 20.0;
+const MAX_FORCE_DISTANCE = 30.0;
 
-function Particle(pos, vel, type) {
-    this.pos = pos;
-    this.vel = vel;
-    this.type = type;
+class Particle {
+    constructor(pos, vel, type) {
+        this.pos = pos;
+        this.vel = vel;
+        this.type = type;
 
-    this.force = createVector(0.0, 0.0);
+        this.perceprionRadius = MAX_FORCE_DISTANCE;
+        this.force = createVector(0.0, 0.0);
+    }
 
-    this.update = function () {
+
+    update() {
         let dv = p5.Vector.mult(this.force, deltaTime);
         this.vel.add(dv);
 
         let dx = p5.Vector.mult(this.vel, deltaTime);
         this.pos.add(dx);
 
-        if (WRAP) {
-            if (this.pos.x < 0) {
-                this.pos.x = width + this.pos.x;
-            }
+        this.force = createVector(0.0, 0.0);
+    }
 
-            if (this.pos.x > width) {
-                this.pos.x = this.pos.x - width;
-            }
-
-            if (this.pos.y < 0) {
-                this.pos.y = height + this.pos.y;
-            }
-
-            if (this.pos.y > height) {
-                this.pos.y = this.pos.y - height;
-            }
-        } else {
-            if (this.pos.x < 0 || this.pos.x > width) {
-                this.vel.x *= -1;
-            }
-
-            if (this.pos.y < 0 || this.pos.y > height) {
-                this.vel.y *= -1;
+    steer(neighbors) {
+        for (let q of neighbors) {
+            if (this !== q) {
+                let force = calculateForce(this, q);
+                this.force.add(force);
             }
         }
 
-        this.force = createVector(0.0, 0.0);
-    };
-
-    this.draw = function () {
-        // noStroke();
-        // fill(this.type.color);
-        // ellipse(this.pos.x, this.pos.y, 8, 8);
-        noFill();
-        stroke(this.type.color);
-        strokeWeight(4);
-        point(this.pos.x, this.pos.y);
-    };
-
-    this.applyForce = function (f) {
-        this.force.add(f);
-    };
+        let drag = p5.Vector.div(this.vel, -FRICTION);
+        this.force.add(drag);
+    }
 }
+
 
 function calculateForce(driven, driver) {
     let distanse = p5.Vector.dist(driven.pos, driver.pos);
@@ -84,3 +59,26 @@ function calculateForce(driven, driver) {
     }
 }
 
+function generateTypes(particle_types) {
+    if (particle_types === undefined) {
+        particle_types = [];
+    }
+
+    for (let j = 0; j < TYPES_COUNT; j++) {
+        let attraction_constants = [];
+
+        for (let k = 0; k < TYPES_COUNT; k++) {
+            attraction_constants.push(randomGaussian(0, FORCE_SD));
+        }
+
+        colorMode(HSB);
+        particle_types.push({
+            type_id: j,
+            color: color(random(0, 255), 200, 255),
+            attraction_constants: attraction_constants
+        });
+        colorMode(RGB);
+    }
+
+    return particle_types;
+}
