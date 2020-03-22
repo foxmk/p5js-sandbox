@@ -1,5 +1,5 @@
-const PARTICLE_COUNT = 200;
-const TYPES_COUNT = 3;
+const PARTICLE_COUNT = 1000;
+const TYPES_COUNT = 4;
 
 let particles = [];
 
@@ -34,44 +34,65 @@ function generateParticles(particle_types) {
     }
 }
 
+let bounds;
+
 function setup() {
     createCanvas(500, 500);
-    colorMode(HSB);
+
+    bounds = new Circle(0, 0, 40, 40);
 
     let particle_types = generateTypes();
     generateParticles(particle_types);
 }
 
-function updateParticles() {
-    for (let i = 0; i < particles.length; i++) {
-        let p = particles[i];
+
+function draw() {
+    clear();
+    background(51);
+
+    bounds = new Circle(mouseX - 20, mouseY - 20, 40, 40);
+
+    let quad = new Quadtree(new Rectangle(0, 0, width, height), 4);
+
+    for (let p of particles) {
+        quad.insert(new Point(p.pos, p));
+    }
+
+    // quad.draw();
+
+    for (let p of particles) {
+        let points = [];
+        quad.query(new Circle(p.pos.x, p.pos.y, MAX_FORCE_DISTANCE), points);
 
         // Calculate resulting force
-        for (let j = 0; j < particles.length; j++) {
-            if (i !== j) {
-                let q = particles[j];
-                let force = calculateForce(p, q);
+        for (let q of points) {
+            if (p !== q.data) {
+                let force = calculateForce(p, q.data);
                 p.applyForce(force);
             }
         }
 
         let drag = p5.Vector.div(p.vel, -FRICTION);
         p.applyForce(drag);
+    }
 
-
+    for (let p of particles) {
         p.update();
     }
-}
 
-function drawParticles() {
+    // for (let p of points) {
+    //     strokeWeight(4);
+    //     stroke(255, 0, 0);
+    //     point(p.position.x, p.position.y);
+    // }
+
+    // noFill();
+    // stroke(0, 255, 0);
+    // strokeWeight(1);
+    // ellipseMode(RADIUS);
+    // ellipse(bounds.x, bounds.y, bounds.r, bounds.r);
+
     for (let i = 0; i < particles.length; i++) {
         particles[i].draw();
     }
-}
-
-function draw() {
-    clear();
-    background(0, 0, 20);
-    updateParticles();
-    drawParticles();
 }

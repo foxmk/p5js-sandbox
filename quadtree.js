@@ -1,8 +1,9 @@
 const DEFAULT_CAPACITY = 4;
 
 class Point {
-    constructor(position) {
+    constructor(position, data) {
         this.position = position;
+        this.data = data;
     }
 }
 

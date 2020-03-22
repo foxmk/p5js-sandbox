@@ -5,7 +5,7 @@ const FRICTION = 20.0;
 const REPEL_CONSTANT = 0.002;
 const REPEL_DISTANCE = 10.0;
 const FORCE_SD = 0.001;
-const MAX_FORCE_DISTANCE = 50.0;
+const MAX_FORCE_DISTANCE = 20.0;
 
 function Particle(pos, vel, type) {
     this.pos = pos;
@@ -51,9 +51,13 @@ function Particle(pos, vel, type) {
     };
 
     this.draw = function () {
-        noStroke();
-        fill(this.type.color);
-        ellipse(this.pos.x, this.pos.y, 8, 8);
+        // noStroke();
+        // fill(this.type.color);
+        // ellipse(this.pos.x, this.pos.y, 8, 8);
+        noFill();
+        stroke(this.type.color);
+        strokeWeight(2);
+        point(this.pos.x, this.pos.y);
     };
 
     this.applyForce = function (f) {
