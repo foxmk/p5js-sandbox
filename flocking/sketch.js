@@ -1,7 +1,6 @@
 const WRAP = true;
 
 const PARTICLE_COUNT = 300;
-const TYPES_COUNT = 3;
 
 let particles = [];
 let debug = false;
@@ -38,14 +37,9 @@ function setup() {
     let canvas = createCanvas(500, 500);
     canvas.parent('sketch');
 
-
-    // let particle_types = generateTypes();
-
     for (let i = 0; i < PARTICLE_COUNT; i++) {
         let pos = createVector(random(0, width), random(0, height));
         let vel = p5.Vector.random2D().mult(1);
-        // let vel = createVector(0, 0);
-        // let type = random(particle_types);
         particles.push(new Particle(pos, vel));
     }
 }
@@ -86,6 +80,5 @@ function draw() {
         rotate(p.velocity.heading() - radians(90));
         triangle(0, 0, -2, -5, 2, -5);
         pop();
-
     }
 }
