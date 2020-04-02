@@ -35,7 +35,9 @@ function detectEdges(p) {
 }
 
 function setup() {
-    createCanvas(500, 500);
+    let canvas = createCanvas(500, 500);
+    canvas.parent('sketch');
+
 
     // let particle_types = generateTypes();
 
@@ -82,7 +84,7 @@ function draw() {
         push();
         translate(p.position.x, p.position.y);
         rotate(p.velocity.heading() - radians(90));
-        triangle(0,0, -2, -5, 2, -5);
+        triangle(0, 0, -2, -5, 2, -5);
         pop();
 
     }
