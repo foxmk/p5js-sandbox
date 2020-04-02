@@ -1,14 +1,15 @@
-const WIDTH = 500;
-const HEIGHT = 500;
 const cellSize = 10;
-const colCount = WIDTH / cellSize;
-const rowCount = HEIGHT / cellSize;
+const colCount = 50;
+const rowCount = 50;
+
+const canvasWidth = cellSize * colCount;
+const canvasHeight = cellSize * rowCount;
 
 let prev = [];
 let next = [];
 
 function setup() {
-    let canvas = createCanvas(WIDTH, HEIGHT);
+    let canvas = createCanvas(canvasWidth, canvasHeight);
     canvas.parent('sketch');
 
     for (let i = 0; i <= colCount; i++) {
