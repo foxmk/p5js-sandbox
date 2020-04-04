@@ -1,25 +1,23 @@
 precision highp float;
 
-uniform vec2 p[2];
+uniform vec3 balls[900];
+const float r = 0.1;
 
 void main() {
 
-    float r = 0.2;
-    float sqDoubleR = (0.04 * 2.0) * (0.04 * 2.0);
-    float sumDist = 0.0;
-
-    for (int i = 0; i < 1; i++) {
-        float dx = gl_PointCoord.x - p[i].x;
-        float dy = gl_PointCoord.y - p[i].y;
+    float v = 0.0;
+    for (int i = 0; i < 900; i++) {
+        vec3 ball = balls[i];
+        float dx =  ball.x - gl_PointCoord.x;
+        float dy =  ball.y - gl_PointCoord.y;
         float sqDist =  dx * dx + dy * dy;
-        sumDist += sqDist;
+
+        v += (r*r/sqDist) * ball.z;
     }
 
-    float dd = sqDoubleR - sumDist;
-
-    if (dd < 0.0) {
-        gl_FragColor = vec4(1, 1, 1, 1);
-    } else {
+    if (v > 1.0) {
         gl_FragColor = vec4(0.9, 0, 0, 1);
+    } else {
+        gl_FragColor = vec4(1, 1, 1, 1);
     }
 }
