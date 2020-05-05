@@ -66,22 +66,30 @@ function samplePoint () {
 
 let xoff = 0
 let yoff = 0
+let hxoff = 0
+let hyoff = 0
+
 
 function draw () {
   clear()
+  colorMode(RGB)
   background(51)
 
   let noiseScale = 0.01
 
   noStroke()
-  fill(color(255))
 
   for (let p of samples) {
-    let nval = noise(p.x * noiseScale + xoff, p.y * noiseScale + yoff)
-    let r = map(nval, 0, 1, 2, 10)
-    ellipse(p.x, p.y, r, r)
+    let hue = map(noise(p.x * noiseScale + hxoff, p.y * noiseScale + hyoff), 0, 1, 0, 360)
+    let rad = map(noise(p.x * noiseScale + xoff, p.y * noiseScale + yoff), 0, 1, 2, 10)
+
+    colorMode(HSL)
+    fill(color(hue, 100, 50))
+    ellipse(p.x, p.y, rad, rad)
   }
 
   xoff += 0.01
   yoff += 0.01
+  hxoff += 0.01
+  hyoff += 0.001
 }
