@@ -4,14 +4,16 @@ const MAX_SAMPLE_RADIUS = 30.0
 const WIDTH = 500
 const HEIGHT = 500
 
-function setup () {
-  let canvas = createCanvas(WIDTH, HEIGHT)
-  canvas.parent('sketch')
-}
-
 let activePoints = []
 let samples = []
 let seeded = false
+
+function setup () {
+  let canvas = createCanvas(WIDTH, HEIGHT)
+  canvas.parent('sketch')
+
+  while (samplePoint() !== null) {}
+}
 
 function samplePoint () {
   function generateCandidate (point) {
@@ -62,24 +64,24 @@ function samplePoint () {
   }
 }
 
-function draw () {
-  if (samplePoint() === null) {
-    noLoop()
-  }
+let xoff = 0
+let yoff = 0
 
+function draw () {
   clear()
   background(51)
 
+  let noiseScale = 0.01
+
   noStroke()
-
   fill(color(255))
+
   for (let p of samples) {
-    ellipse(p.x, p.y, 8, 8)
+    let nval = noise(p.x * noiseScale + xoff, p.y * noiseScale + yoff)
+    let r = map(nval, 0, 1, 2, 10)
+    ellipse(p.x, p.y, r, r)
   }
 
-  fill(color(255, 0, 0))
-  for (let p of activePoints) {
-    ellipse(p.x, p.y, 8, 8)
-  }
-
+  xoff += 0.01
+  yoff += 0.01
 }
