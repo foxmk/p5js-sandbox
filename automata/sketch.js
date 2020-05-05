@@ -8,30 +8,31 @@ const canvasHeight = cellSize * rowCount;
 let cells = [];
 
 function setup() {
-    let canvas = createCanvas(canvasWidth, canvasHeight);
-    canvas.parent('sketch');
+  let canvas = createCanvas(canvasWidth, canvasHeight);
+  canvas.parent('sketch');
 
-    for (let i = 0; i < rowCount; i++) {
-        cells.push([]);
-        for (let j = 0; j < colCount; j++) {
-            cells[i].push(0);
-        }
+  for (let i = 0; i < rowCount; i++) {
+    cells.push([]);
+    for (let j = 0; j < colCount; j++) {
+      cells[i].push(0);
     }
+  }
 
-    cells[0][colCount / 2] = 1;
+  cells[0][colCount / 2] = 1;
 
-    frameRate(60);
+  frameRate(60);
 }
 
 let currentRow = 1;
+
 // let currentCol = 1;
 
 function draw() {
-    clear();
+  clear();
 
-    let prevRow = cells[(currentRow === 0 ? rowCount - 1 : currentRow - 1)];
+  let prevRow = cells[(currentRow === 0 ? rowCount - 1 : currentRow - 1)];
 
-    for (let currentCol = 0; currentCol < colCount; currentCol++){
+  for (let currentCol = 0; currentCol < colCount; currentCol++) {
 
     let left = prevRow[(currentCol === 0 ? colCount : currentCol - 1)];
     let central = prevRow[currentCol];
@@ -41,31 +42,31 @@ function draw() {
     // console.log(currentPattern.toString(2));
 
     // cells[currentRow][currentCol] = random() >= 0.5;
-    cells[currentRow][currentCol] = left ^ (central || right);}
+    cells[currentRow][currentCol] = left ^ (central || right);
+  }
 
+  for (let col = 0; col < colCount; col++) {
+    for (let row = 0; row < rowCount; row++) {
+      let y = row * cellSize;
+      let x = col * cellSize;
 
-    for (let col = 0; col < colCount; col++) {
-        for (let row = 0; row < rowCount; row++) {
-            let y = row * cellSize;
-            let x = col * cellSize;
-
-            if (cells[row][col] === 1) {
-                fill(color(0));
-            } else {
-                if (row === currentRow /*&& col === currentCol*/) {
-                    fill(color(255, 0, 0));
-                } else {
-                    fill(color(255));
-                }
-            }
-            noStroke();
-            rect(x, y, cellSize, cellSize);
+      if (cells[row][col] === 1) {
+        fill(color(0));
+      } else {
+        if (row === currentRow /*&& col === currentCol*/) {
+          fill(color(255, 0, 0));
+        } else {
+          fill(color(255));
         }
+      }
+      noStroke();
+      rect(x, y, cellSize, cellSize);
     }
+  }
 
-    // currentCol = currentCol === colCount - 1 ? 0 : currentCol + 1;
-    //
-    // if (currentCol === 0) {
-        currentRow = currentRow === rowCount - 1 ? 0 : currentRow + 1;
-    // }
+  // currentCol = currentCol === colCount - 1 ? 0 : currentCol + 1;
+  //
+  // if (currentCol === 0) {
+  currentRow = currentRow === rowCount - 1 ? 0 : currentRow + 1;
+  // }
 }
