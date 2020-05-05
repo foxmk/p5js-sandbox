@@ -34,7 +34,7 @@ function draw () {
   colorMode(RGB)
   background(51)
 
-  let noiseScale = 0.01
+  let noiseScale = 0.1
 
   noStroke()
 
