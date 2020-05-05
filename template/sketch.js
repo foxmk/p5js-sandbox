@@ -1,5 +1,8 @@
+const WIDTH = 500
+const HEIGHT = 500
+
 function setup() {
-    let canvas = createCanvas(500, 500);
+    let canvas = createCanvas(WIDTH, HEIGHT);
     canvas.parent('sketch');
 }
 
